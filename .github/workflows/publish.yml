@@ -2,7 +2,7 @@ name: Build and Publish to GitHub Packages
 
 on:
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
   build:
@@ -18,11 +18,12 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
           cache: maven
           server-id: github
-          settings-path: ${{ github.workspace }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Set version from release tag
         run: |
