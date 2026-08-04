@@ -1,0 +1,52 @@
+# Maven build output
+/target/
+
+# Kotlin/IDEA
+/.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Gradle cache and build output (if any)
+.gradle/
+build/
+
+# User-specific files
+*.log
+.DS_Store
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Generated files
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Package distribution
+*.7z
+*.gz
+*.xz
+
+# Kotlin
+*.kotlin_module
+
+# Temporary files
+*~
+*.swp
+*.swo
+
+# Maven wrapper cache
+.mvn/wrapper/maven-wrapper.jar
