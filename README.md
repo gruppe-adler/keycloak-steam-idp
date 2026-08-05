@@ -41,7 +41,7 @@ src/main/resources/META-INF/services/
 |----------|---------|
 | JDK      | 17+     |
 | Maven    | 3.8+    |
-| Keycloak | 24.x    |
+| Keycloak | 26.6.3+ |
 
 ---
 
@@ -62,7 +62,7 @@ mvn clean package -DskipTests
 # 1. Copy the JAR into the providers directory
 cp target/keycloak-steam-provider-1.0.0.jar $KEYCLOAK_HOME/providers/
 
-# 2. Rebuild Keycloak's optimised image (required once per new provider)
+# 2. Rebuild Keycloak's optimized image (required once per new provider)
 $KEYCLOAK_HOME/bin/kc.sh build
 
 # 3. Start Keycloak
@@ -72,7 +72,7 @@ $KEYCLOAK_HOME/bin/kc.sh start
 ### Docker / Kubernetes
 
 ```dockerfile
-FROM quay.io/keycloak/keycloak:24.0.3
+FROM quay.io/keycloak/keycloak:26.6.3
 
 COPY target/keycloak-steam-provider-1.0.0.jar /opt/keycloak/providers/
 RUN /opt/keycloak/bin/kc.sh build
@@ -97,7 +97,7 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start"]
 
 ### Mappers (optional but recommended)
 
-Under **Identity Providers → Steam → Mappers → Add mapper**, choose  
+Under **Identity Providers → Steam → Mappers → Add mapper**, choose
 **Steam Attribute Importer** and configure:
 
 | Steam Attribute   | User Attribute |
@@ -107,7 +107,7 @@ Under **Identity Providers → Steam → Mappers → Add mapper**, choose
 | `steamAvatarUrl`  | `picture`      |
 | `steamProfileUrl` | `profile`      |
 
-These Keycloak user attributes can then be exposed as claims in your tokens via  
+These Keycloak user attributes can then be exposed as claims in your tokens via
 **Client Scopes → profile → Mappers**.
 
 ---
@@ -125,21 +125,21 @@ These Keycloak user attributes can then be exposed as claims in your tokens via
 
 ## Security notes
 
-* **Back-channel verification** — the `check_authentication` call is made  
+* **Back-channel verification** — the `check_authentication` call is made
   server-to-server, so the assertion cannot be forged by a malicious redirect.
-* **API key storage** — the key is stored as a Keycloak `SECRET_TYPE` config  
+* **API key storage** — the key is stored as a Keycloak `SECRET_TYPE` config
   property; it is masked in the Admin Console and encrypted in the database.
-* The provider does **not** use `openid.sreg` or `ax` extensions — only the  
+* The provider does **not** use `openid.sreg` or `ax` extensions — only the
   canonical SteamID is derived from the claimed identity URL.
 
 ---
 
 ## Extending
 
-* **Custom claims** — add fields to `SteamPlayerSummary` and populate them in  
-  `SteamApiClient.parsePlayerSummary`, then set them in  
+* **Custom claims** — add fields to `SteamPlayerSummary` and populate them in
+  `SteamApiClient.parsePlayerSummary`, then set them in
   `SteamIdentityProvider.buildIdentityContext`.
-* **Caching** — wrap `SteamApiClient.getPlayerSummary` with a Keycloak  
+* **Caching** — wrap `SteamApiClient.getPlayerSummary` with a Keycloak
   `InfinispanConnectionProvider` cache to reduce Web API calls on token refresh.
-* **Friends / groups** — add additional `ISteamUser` calls in `SteamApiClient`  
+* **Friends / groups** — add additional `ISteamUser` calls in `SteamApiClient`
   and store results as multivalued user attributes for group mapping.
