@@ -231,7 +231,7 @@ class SteamIdentityProvider(
             ctx.id                = steamId
             ctx.idp               = this
             ctx.brokerUserId      = steamId
-            ctx.username          = "steam_$steamId"
+            ctx.username          = summary?.personaName ?: "SteamID_$steamId"
             ctx.authenticationSession = authSession
 
             ctx.setUserAttribute(SteamIdentityProviderConfig.CLAIM_STEAM_ID, steamId)
