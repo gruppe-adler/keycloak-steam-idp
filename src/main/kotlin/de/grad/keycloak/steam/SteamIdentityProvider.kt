@@ -202,6 +202,12 @@ class SteamIdentityProvider(
         params: Map<String, String>,
         authSession: AuthenticationSessionModel,
     ): BrokeredIdentityContext {
+        val opEndpoint = params["openid.op_endpoint"]
+        if (opEndpoint != SteamIdentityProviderConfig.STEAM_OPENID_ENDPOINT) {
+            log.warnf("Rejecting assertion: unexpected openid.op_endpoint=%s", opEndpoint)
+            throw IdentityBrokerException("Unexpected OpenID provider endpoint")
+        }
+
         verifyOpenIdAssertion(params)
 
         val claimedId = params["openid.claimed_id"]
@@ -222,10 +228,10 @@ class SteamIdentityProvider(
         }
 
         return BrokeredIdentityContext(config).also { ctx ->
-            ctx.id                = SteamIdentityProviderConfig.PROVIDER_ID
+            ctx.id                = steamId
             ctx.idp               = this
             ctx.brokerUserId      = steamId
-            ctx.username          = summary?.personaName ?: "SteamID_$steamId"
+            ctx.username          = "steam_$steamId"
             ctx.authenticationSession = authSession
 
             ctx.setUserAttribute(SteamIdentityProviderConfig.CLAIM_STEAM_ID, steamId)
