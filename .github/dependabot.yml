@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "TheWillard"
+    groups:
+      # Keycloak artifacts must always move together.
+      keycloak:
+        patterns:
+          - "org.keycloak:*"
+      # kotlin-stdlib and kotlin-maven-plugin share the kotlin.version property.
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin:*"
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "TheWillard"
+    groups:
+      actions:
+        patterns:
+          - "*"
