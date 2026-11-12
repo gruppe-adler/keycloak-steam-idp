@@ -13,11 +13,17 @@
     <description>Steam OpenID + Web API identity provider for Keycloak</description>
 
     <properties>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>2.2.21</kotlin.version>
         <keycloak.version>26.6.3</keycloak.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <junit.version>6.1.3</junit.version>
+        <mockk.version>1.14.12</mockk.version>
+        <surefire.version>3.6.1</surefire.version>
+        <resteasy.version>6.2.15.Final</resteasy.version>
     </properties>
 
     <dependencies>
@@ -61,10 +67,32 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk-jvm</artifactId>
+            <version>${mockk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- JAX-RS RuntimeDelegate so tests can build Responses (Keycloak provides one at runtime) -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-core</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -74,6 +102,10 @@
                     <execution>
                         <id>compile</id>
                         <goals><goal>compile</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals><goal>test-compile</goal></goals>
                     </execution>
                 </executions>
             </plugin>
@@ -95,6 +127,26 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Exposes ${net.bytebuddy:byte-buddy-agent:jar} for the surefire argLine below -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.9.0</version>
+                <executions>
+                    <execution>
+                        <goals><goal>properties</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <!-- Load MockK's agent up front; JDK 21+ warns on (and newer JDKs refuse) dynamic attach -->
+                    <argLine>-javaagent:${net.bytebuddy:byte-buddy-agent:jar} -Xshare:off</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

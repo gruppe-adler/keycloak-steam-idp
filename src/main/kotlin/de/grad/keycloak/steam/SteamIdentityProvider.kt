@@ -35,10 +35,12 @@ import java.time.Duration
 class SteamIdentityProvider(
     session: KeycloakSession,
     config: SteamIdentityProviderConfig,
+    private val apiClient: SteamApiClient = SteamApiClient(config.steamApiKey),
+    /** Where `check_authentication` is POSTed; overridable for tests only. */
+    private val openIdVerifyUrl: String = SteamIdentityProviderConfig.STEAM_OPENID_ENDPOINT,
 ) : org.keycloak.broker.provider.AbstractIdentityProvider<SteamIdentityProviderConfig>(session, config) {
 
-    private val log       = Logger.getLogger(SteamIdentityProvider::class.java)
-    private val apiClient = SteamApiClient(config.steamApiKey)
+    private val log = Logger.getLogger(SteamIdentityProvider::class.java)
 
     override fun performLogin(request: AuthenticationRequest): Response {
         val returnTo = "${request.redirectUri}?state=${enc(request.state.encoded)}"
@@ -267,7 +269,7 @@ class SteamIdentityProvider(
             .entries.joinToString("&") { (k, v) -> "${enc(k)}=${enc(v)}" }
 
         val req = HttpRequest.newBuilder()
-            .uri(URI.create(SteamIdentityProviderConfig.STEAM_OPENID_ENDPOINT))
+            .uri(URI.create(openIdVerifyUrl))
             .timeout(Duration.ofSeconds(10))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .POST(HttpRequest.BodyPublishers.ofString(body))
