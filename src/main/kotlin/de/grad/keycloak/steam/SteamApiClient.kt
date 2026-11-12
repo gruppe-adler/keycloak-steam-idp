@@ -13,7 +13,10 @@ import java.time.Duration
  * Uses only the JDK 11+ [HttpClient] so there are no additional runtime
  * dependencies beyond Kotlin stdlib and the JDK itself.
  */
-class SteamApiClient(private val apiKey: String) {
+class SteamApiClient(
+    private val apiKey: String,
+    private val playerSummariesUrl: String = SteamIdentityProviderConfig.STEAM_GET_PLAYER_SUMMARIES,
+) {
 
     private val log: Logger = Logger.getLogger(SteamApiClient::class.java)
 
@@ -27,7 +30,7 @@ class SteamApiClient(private val apiKey: String) {
      */
     fun getPlayerSummary(steamId: String): SteamPlayerSummary? {
         val url = buildString {
-            append(SteamIdentityProviderConfig.STEAM_GET_PLAYER_SUMMARIES)
+            append(playerSummariesUrl)
             append("?key=").append(apiKey)
             append("&steamids=").append(steamId)
         }
