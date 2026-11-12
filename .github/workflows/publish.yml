@@ -5,6 +5,23 @@ on:
     types: [published]
 
 jobs:
+  release-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # Fill in the release description from the PRs merged since the previous
+      # release, grouped by .github/release.yml. Hand-written notes are kept.
+      - name: Generate release notes
+        if: github.event.release.body == ''
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases/generate-notes" -f tag_name="$TAG" --jq .body > notes.md
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file notes.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+
   build:
     runs-on: ubuntu-latest
     permissions:

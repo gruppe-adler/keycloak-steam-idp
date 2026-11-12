@@ -1,0 +1,10 @@
+# Categories for auto-generated release notes (used by the publish workflow).
+changelog:
+  categories:
+    - title: Changes
+      exclude:
+        labels:
+          - dependencies
+    - title: Dependencies
+      labels:
+        - dependencies
