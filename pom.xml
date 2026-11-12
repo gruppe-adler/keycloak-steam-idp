@@ -59,14 +59,10 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
-
-        <!-- Jakarta RS (provided by Keycloak runtime) -->
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--
+            jakarta.ws.rs-api is intentionally not declared: it comes transitively from
+            keycloak-services, so its version always matches the Keycloak release.
+        -->
 
         <!-- Test -->
         <dependency>
