@@ -22,6 +22,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
 
+      # Without a title GitHub shows the tagged commit's message (e.g. a merge commit).
+      - name: Use tag as release title
+        if: github.event.release.name == ''
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+
   build:
     runs-on: ubuntu-latest
     permissions:
